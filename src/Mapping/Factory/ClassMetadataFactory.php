@@ -19,6 +19,7 @@ use Ivory\Serializer\Mapping\Loader\ChainClassMetadataLoader;
 use Ivory\Serializer\Mapping\Loader\ClassMetadataLoaderInterface;
 use Ivory\Serializer\Mapping\Loader\ReflectionClassMetadataLoader;
 use phpDocumentor\Reflection\ClassReflector;
+use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -54,7 +55,10 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
             if (class_exists(PropertyInfoExtractor::class)) {
                 $extractors = $typeExtractors = [new ReflectionExtractor()];
 
-                if (class_exists(ClassReflector::class)) {
+                //is phpdocumentor/reflection installed? (different checks for different versions)
+                if (class_exists(ClassReflector::class)
+                    or interface_exists(DocBlockFactoryInterface::class)
+                ) {
                     array_unshift($typeExtractors, new PhpDocExtractor());
                 }
 
